@@ -20,3 +20,15 @@ openai: Interacts with GPT-4
 pydantic: Data validation
 python-multipart: Handles file uploads
 
+docker setup:
+install docker desktop
+docker --version
+docker run hello-world // test installation
+touch backend/Dockerfile
+touch frontend/Dockerfile
+
+touch docker-compose.yml
+docker-compose config
+docker-compose up --build
+docker ps //verify
+
