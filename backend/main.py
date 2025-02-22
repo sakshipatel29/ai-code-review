@@ -1,1 +1,62 @@
 # FastAPI server
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+from openai import OpenAI
+
+client = OpenAI(api_key="YOUR-API-KEY")
+from fastapi.middleware.cors import CORSMiddleware
+import subprocess
+import logging
+
+app = FastAPI()
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+@app.exception_handler(Exception)
+async def general_exception_handler(request: Request, exc: Exception):
+    logger.error(f"An error occurred: {exc}")
+    return JSONResponse(
+        status_code=500,
+        content={"message": "Internal Server Error", "details": str(exc)},
+    )
+
+# Enable CORS for frontend requests
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+class CodeRequest(BaseModel):
+    code: str
+
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to the FastAPI application!"}
+
+@app.post("/analyze")
+def analyze_code(request: CodeRequest):
+    response = client.chat.completions.create(model="gpt-4",
+    messages=[{"role": "system", "content": "Analyze the given code for errors and improvements."},
+              {"role": "user", "content": request.code}])
+    return {"suggestions": response.choices[0].message.content}
+
+@app.post("/lint")
+def lint_code(request: CodeRequest):
+    with open("temp.py", "w") as f:
+        f.write(request.code)
+
+    result = subprocess.run(["pylint", "temp.py"], capture_output=True, text=True)
+    return {"linting_results": result.stdout}
+
+@app.post("/autodoc")
+def auto_comment(request: CodeRequest):
+    response = client.chat.completions.create(model="gpt-4",
+    messages=[{"role": "system", "content": "Generate comments for this code."},
+              {"role": "user", "content": request.code}])
+    return {"comments": response.choices[0].message.content}
