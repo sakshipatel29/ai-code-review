@@ -3,7 +3,7 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f4f4f4;
+  background-color: #ffffff;
 }
 
 .app-container {
@@ -13,8 +13,8 @@ body {
 }
 
 .navbar {
-  background-color: #007bff;
-  padding: 10px 20px;
+  background-color: #4d5d6d;
+  padding: 5px 5px;
   color: white;
 }
 
@@ -29,10 +29,22 @@ body {
   margin: 0 20px;
   cursor: pointer;
   font-size: 18px;
+  padding: 10px 20px;
+  border: 2px solid transparent;
+  border-radius: 5px;
+  transition: all 0.3s ease;
 }
 
 .navbar ul li:hover {
-  text-decoration: underline;
+  border-color: #929699;
+  background-color: #929699;
+}
+
+/* Active Link */
+.navbar ul li.active {
+  border-color: rgb(0, 0, 0); /* Add border color when active */
+  background-color: #0056b3; /* Change background when active */
+  color: white;
 }
 
 /* Content Area */
@@ -75,7 +87,7 @@ button {
   padding: 10px 20px;
   margin-top: 15px;
   font-size: 16px;
-  background: #007bff;
+  background: #262626;
   color: white;
   border: none;
   border-radius: 5px;
@@ -84,7 +96,7 @@ button {
 }
 
 button:hover {
-  background: #0056b3;
+  background: #000000;
 }
 
 /* Right Side - Results */
