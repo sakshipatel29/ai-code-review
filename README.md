@@ -34,4 +34,34 @@ AI Code Review is a web application designed to analyze code snippets using Open
 
 
 
+2. #### Install Dependencies
+    ```bash
+    npm install
+    npm install monaco-editor axios
+
+
+### Backend
+
+1. **Set Up the Virtual Environment**:
+    ```bash
+    mkdir backend && cd backend
+    python -m venv venv
+    source venv/bin/activate
+
+2. #### Install Dependencies
+    ```bash
+    pip install fastapi uvicorn openai pydantic python-multipart
+
+
+
+#### Backend Dependencies Overview
+
+- **fastapi**: A modern, fast (high-performance) web framework for building APIs with Python 3.6+ based on standard Python type hints.
+- **uvicorn**: An ASGI server for FastAPI, providing high-performance capabilities.
+- **openai**: A library to interact with OpenAI's GPT-4 model.
+- **pydantic**: Data validation and settings management using Python type annotations.
+- **python-multipart**: A module to handle file uploads in FastAPI.
+
+
+
  
