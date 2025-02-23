@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import MonacoEditor from '@monaco-editor/react';
 import axios from 'axios';
+import './App.css';
 
 function App() {
   const [code, setCode] = useState('');
@@ -17,16 +18,22 @@ function App() {
   };
 
   return (
-    <div>
-      <h1>AI-Powered Code Analyzer</h1>
-      <MonacoEditor
-        height="400px"
-        language="javascript"
-        value={code}
-        onChange={(value) => setCode(value)}
-      />
-      <button onClick={handleAnalyze}>Analyze Code</button>
-      <div>
+    <div className="container">
+      {/* Left Side - Code Editor */}
+      <div className="editor-container">
+        <h1>AI-Powered Code Analyzer</h1>
+        <MonacoEditor
+          height="100%"
+          language="javascript"
+          value={code}
+          onChange={(value) => setCode(value)}
+          className="monaco-editor"
+        />
+        <button onClick={handleAnalyze}>Analyze Code</button>
+      </div>
+
+      {/* Right Side - AI Suggestions */}
+      <div className="analysis-container">
         <h2>AI Suggestions:</h2>
         <p>{analysis}</p>
       </div>

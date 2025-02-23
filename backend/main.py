@@ -1,13 +1,17 @@
-# FastAPI server
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from openai import OpenAI
-
-client = OpenAI(api_key="YOUR-API-KEY")
 from fastapi.middleware.cors import CORSMiddleware
 import subprocess
 import logging
+import os
+
+api_key = os.getenv("OPENAI_API_KEY")
+if not api_key:
+    raise ValueError("OPENAI_API_KEY environment variable is not set.")
+
+client = OpenAI(api_key=api_key)
 
 app = FastAPI()
 
@@ -31,7 +35,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 class CodeRequest(BaseModel):
     code: str
 
@@ -41,9 +44,13 @@ def read_root():
 
 @app.post("/analyze")
 def analyze_code(request: CodeRequest):
-    response = client.chat.completions.create(model="gpt-4",
-    messages=[{"role": "system", "content": "Analyze the given code for errors and improvements."},
-              {"role": "user", "content": request.code}])
+    response = client.chat.completions.create(
+        model="gpt-4",
+        messages=[
+            {"role": "system", "content": "Analyze the given code for errors and improvements."},
+            {"role": "user", "content": request.code},
+        ],
+    )
     return {"suggestions": response.choices[0].message.content}
 
 @app.post("/lint")
@@ -56,7 +63,11 @@ def lint_code(request: CodeRequest):
 
 @app.post("/autodoc")
 def auto_comment(request: CodeRequest):
-    response = client.chat.completions.create(model="gpt-4",
-    messages=[{"role": "system", "content": "Generate comments for this code."},
-              {"role": "user", "content": request.code}])
+    response = client.chat.completions.create(
+        model="gpt-4",
+        messages=[
+            {"role": "system", "content": "Generate comments for this code."},
+            {"role": "user", "content": request.code},
+        ],
+    )
     return {"comments": response.choices[0].message.content}
