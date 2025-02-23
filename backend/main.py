@@ -18,14 +18,6 @@ app = FastAPI()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-@app.exception_handler(Exception)
-async def general_exception_handler(request: Request, exc: Exception):
-    logger.error(f"An error occurred: {exc}")
-    return JSONResponse(
-        status_code=500,
-        content={"message": "Internal Server Error", "details": str(exc)},
-    )
-
 # Enable CORS for frontend requests
 app.add_middleware(
     CORSMiddleware,
