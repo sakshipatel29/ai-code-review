@@ -1,34 +1,37 @@
-# ai-code-review
+# AI Code Review
 
-frontend:
-npm create vite@latest ai-code-review --template react
-cd ai-code-review
-npm install
-npm install monaco-editor axios
+![Project Logo](image.png)
+
+*An AI-powered code review tool leveraging FastAPI and React.*
+
+## Overview
+
+AI Code Review is a web application designed to analyze code snippets using OpenAI's GPT-4 model. It provides insightful suggestions and improvements for your code. The project is structured with a React frontend and a FastAPI backend.
+
+## Features
+
+- **Code Analysis**: Submit code snippets to receive AI-generated feedback.
+- **Linting**: Ensure your code adheres to best practices.
+- **Auto Documentation**: Generate comments and documentation for your code automatically.
+
+## Project Structure
 
 
-backend:
-mkdir backend && cd backend
-python -m venv venv 
-source venv/bin/activate
-pip install fastapi uvicorn openai pydantic python-multipart
+## Prerequisites
+
+- **Node.js** (for the frontend)
+- **Python 3.8+** (for the backend)
+- **Docker** (for containerization)
+
+## Setup Instructions
+
+### Frontend
+
+1. **Initialize the React App**:
+   ```bash
+   npx create-vite@latest ai-code-review --template react
+   cd ai-code-review
 
 
-fastapi: Backend framework
-uvicorn: Runs the FastAPI server
-openai: Interacts with GPT-4
-pydantic: Data validation
-python-multipart: Handles file uploads
 
-docker setup:
-install docker desktop
-docker --version
-docker run hello-world // test installation
-touch backend/Dockerfile
-touch frontend/Dockerfile
-
-touch docker-compose.yml
-docker-compose config
-docker-compose up --build
-docker ps //verify
-
+ 
