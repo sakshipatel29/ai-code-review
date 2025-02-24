@@ -12,6 +12,12 @@ function App() {
   const [optimization, setOptimization] = useState('');
   const [securityScanResults, setSecurityScanResults] = useState([]);
   const [similarityScore, setSimilarityScore] = useState('');
+  const [detailedComparison, setDetailedComparison] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [codeA, setCodeA] = useState('');
+  const [codeB, setCodeB] = useState('');
+
 
   const handleAnalyze = async () => {
     try {
@@ -63,13 +69,22 @@ function App() {
     }
   };
 
-  const handleSimilarityCheck = async () => {
+  const checkSimilarity = async () => {
+    setLoading(true);
+    setError(null);
+
     try {
-      const response = await axios.post("http://127.0.0.1:8000/similarity-check", { code });
+      const response = await axios.post('http://localhost:8000/similarity-check', {
+        codeA: codeA,
+        codeB: codeB,
+      });
+
       setSimilarityScore(response.data.similarity_score);
-    } catch (error) {
-      console.error("Error checking code similarity:", error);
-      setSimilarityScore("Error: Unable to check similarity.");
+      setDetailedComparison(response.data.detailed_comparison);
+    } catch (err) {
+      setError('An error occurred while checking similarity.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -202,19 +217,44 @@ function App() {
         {activeSection === 'similarity' && (
           <div className="section-container">
             <div className="editor-container">
-              <h1>Code Similarity Checker (Plagiarism Detection)</h1>
+              <h1>Check Plagiarism</h1>
+              <h2>Code A:</h2>
               <MonacoEditor
                 height="300px"
                 language="javascript"
-                value={code}
-                onChange={(value) => setCode(value)}
+                value={codeA}
+                onChange={(value) => setCodeA(value)}
                 className="monaco-editor"
               />
-              <button onClick={handleSimilarityCheck}>Check Similarity</button>
+              <h2>Code B:</h2>
+              <MonacoEditor
+                height="300px"
+                language="javascript"
+                value={codeB}
+                onChange={(value) => setCodeB(value)}
+                className="monaco-editor"
+              />
+              <button onClick={checkSimilarity} disabled={loading}>
+                {loading ? 'Checking...' : 'Check Similarity'}
+              </button>
             </div>
+
             <div className="similarity-container">
-              <h2>Similarity Score:</h2>
-              <p>{similarityScore}</p>
+              {similarityScore && (
+                <>
+                  <h2>Similarity Score:</h2>
+                  <p>{similarityScore}%</p>
+                </>
+              )}
+
+              {detailedComparison && (
+                <>
+                  <h3>Detailed Comparison:</h3>
+                  <pre>{detailedComparison}</pre>
+                </>
+              )}
+
+              {error && <p style={{ color: 'red' }}>{error}</p>}
             </div>
           </div>
         )}

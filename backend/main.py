@@ -6,6 +6,8 @@ from fastapi.middleware.cors import CORSMiddleware
 import subprocess
 import logging
 import os
+import difflib
+import re
 
 api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
@@ -21,14 +23,15 @@ logger = logging.getLogger(__name__)
 # Enable CORS for frontend requests
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 class CodeRequest(BaseModel):
-    code: str
+    codeA: str
+    codeB: str
 
 @app.get("/")
 def read_root():
@@ -86,3 +89,44 @@ def security_scan(request: CodeRequest):
     )
     vulnerabilities = response.choices[0].message.content
     return {"security_vulnerabilities": vulnerabilities}
+
+@app.post("/similarity-check")
+def similarity_check(request: CodeRequest):
+    print(request)  # Check that both codeA and codeB are being sent
+    codeA = request.codeA
+    codeB = request.codeB
+
+    # Function to normalize code by removing function names and string literals for better comparison
+    def normalize_code(code):
+        # Remove function names and variable names
+        code = re.sub(r'\bdef\s+\w+\s*\(.*\):', 'def function_name_placeholder():', code)
+        # Remove string literals
+        code = re.sub(r"'[^']*'", "'string_placeholder'", code)
+        return code
+    
+    # Normalize both code snippets
+    normalized_codeA = normalize_code(codeA)
+    normalized_codeB = normalize_code(codeB)
+    
+    def check_similarity(code1, code2):
+        try:
+            # Use difflib to compare the normalized code based on lines
+            sequence_matcher = difflib.SequenceMatcher(None, code1.splitlines(), code2.splitlines())
+            similarity_score = sequence_matcher.ratio()
+
+            # Create a detailed comparison of matching lines
+            matching_blocks = sequence_matcher.get_matching_blocks()
+            detailed_comparison = "\n".join([f"Matching block: {code1.splitlines()[start]} <-> {code2.splitlines()[start]}"
+                                            for start, _, length in matching_blocks if length > 0])
+            
+            return similarity_score, detailed_comparison
+        except Exception as e:
+            return 0.0, str(e)
+
+    # Get similarity score and detailed comparison
+    similarity_score, detailed_comparison = check_similarity(normalized_codeA, normalized_codeB)
+
+    return JSONResponse(content={
+        "similarity_score": f"{similarity_score * 100:.2f}%",
+        "detailed_comparison": detailed_comparison
+    })
