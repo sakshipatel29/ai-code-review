@@ -74,3 +74,15 @@ def optimize_code(request: CodeRequest):
         ],
     )
     return {"optimized_code": response.choices[0].message.content}
+
+@app.post("/security-scan")
+def security_scan(request: CodeRequest):
+    response = client.chat.completions.create(
+        model="gpt-4",
+        messages=[
+            {"role": "system", "content": "Scan the given code for potential security vulnerabilities like SQL injection, XSS, or buffer overflows."},
+            {"role": "user", "content": request.code},
+        ],
+    )
+    vulnerabilities = response.choices[0].message.content
+    return {"security_vulnerabilities": vulnerabilities}

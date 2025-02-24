@@ -10,6 +10,7 @@ function App() {
   const [autoComments, setAutoComments] = useState('');
   const [activeSection, setActiveSection] = useState('analyze');
   const [optimization, setOptimization] = useState('');
+  const [securityScanResults, setSecurityScanResults] = useState([]);
 
   const handleAnalyze = async () => {
     try {
@@ -51,6 +52,16 @@ function App() {
     }
   };
 
+  const handleSecurityScan = async () => {
+    try {
+      const response = await axios.post("http://127.0.0.1:8000/security-scan", { code });
+      setSecurityScanResults(response.data.security_vulnerabilities);
+    } catch (error) {
+      console.error("Error scanning for security vulnerabilities:", error);
+      setSecurityScanResults([]);
+    }
+  };
+
   return (
     <div className="app-container">
       {/* Navbar */}
@@ -60,6 +71,7 @@ function App() {
           <li onClick={() => setActiveSection('lint')}>Lint</li>
           <li onClick={() => setActiveSection('autodoc')}>AutoDoc</li>
           <li onClick={() => setActiveSection('optimize')}>Optimize</li>
+          <li onClick={() => setActiveSection('security')}>Security Scan</li>
         </ul>
       </nav>
 
@@ -128,7 +140,7 @@ function App() {
         {activeSection === 'optimize' && (
           <div className="section-container">
             <div className="editor-container">
-              <h1>Optimize your code</h1>
+              <h1>Optimize Your Code</h1>
               <MonacoEditor
                 height="300px"
                 language="javascript"
@@ -136,11 +148,42 @@ function App() {
                 onChange={(value) => setCode(value)}
                 className="monaco-editor"
               />
-              <button onClick={handleOptimize}>Optimize</button>
+              <button onClick={handleOptimize}>Optimize Code</button>
             </div>
             <div className="optimize-container">
-              <h2>Optimize answer:</h2>
+              <h2>Optimized Code:</h2>
               <pre>{optimization}</pre>
+            </div>
+          </div>
+        )}
+
+        {activeSection === 'security' && (
+          <div className="section-container">
+            <div className="editor-container">
+              <h1>Security Vulnerability Scan</h1>
+              <MonacoEditor
+                height="300px"
+                language="javascript"
+                value={code}
+                onChange={(value) => setCode(value)}
+                className="monaco-editor"
+              />
+              <button onClick={handleSecurityScan}>Scan for Security Vulnerabilities</button>
+            </div>
+            <div className="security-scan-container">
+              <h2>Security Scan Results:</h2>
+              {securityScanResults.length > 0 ? (
+                securityScanResults.map((vulnerability, index) => (
+                  <div key={index} className={`vulnerability ${vulnerability.risk.toLowerCase()}`}>
+                    <h3>{vulnerability.type}</h3>
+                    <p><strong>Risk Level:</strong> {vulnerability.risk}</p>
+                    <p><strong>Details:</strong> {vulnerability.details}</p>
+                    <p><strong>Suggested Fix:</strong> {vulnerability.fix}</p>
+                  </div>
+                ))
+              ) : (
+                <p>No vulnerabilities detected.</p>
+              )}
             </div>
           </div>
         )}

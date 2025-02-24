@@ -103,7 +103,8 @@ button:hover {
 .analysis-container,
 .linting-container,
 .auto-doc-container,
-.optimize-container {
+.optimize-containe,
+.security-scan-container {
   background: white;
   padding: 20px;
   border-radius: 8px;
