@@ -8,7 +8,8 @@ function App() {
   const [analysis, setAnalysis] = useState('');
   const [lintingResults, setLintingResults] = useState('');
   const [autoComments, setAutoComments] = useState('');
-  const [activeSection, setActiveSection] = useState('analyze'); // State to control which section is visible
+  const [activeSection, setActiveSection] = useState('analyze');
+  const [optimization, setOptimization] = useState('');
 
   const handleAnalyze = async () => {
     try {
@@ -40,6 +41,16 @@ function App() {
     }
   };
 
+  const handleOptimize = async () => {
+    try {
+      const response = await axios.post("http://127.0.0.1:8000/optimize", { code });
+      setOptimization(response.data.optimized_code);
+    } catch (error) {
+      console.error("Error optimizing code:", error);
+      setOptimization("Error: Unable to optimize code.");
+    }
+  };
+
   return (
     <div className="app-container">
       {/* Navbar */}
@@ -48,6 +59,7 @@ function App() {
           <li onClick={() => setActiveSection('analyze')}>Analyze</li>
           <li onClick={() => setActiveSection('lint')}>Lint</li>
           <li onClick={() => setActiveSection('autodoc')}>AutoDoc</li>
+          <li onClick={() => setActiveSection('optimize')}>Optimize</li>
         </ul>
       </nav>
 
@@ -109,6 +121,26 @@ function App() {
             <div className="auto-doc-container">
               <h2>Auto Generated Comments:</h2>
               <pre>{autoComments}</pre>
+            </div>
+          </div>
+        )}
+
+        {activeSection === 'optimize' && (
+          <div className="section-container">
+            <div className="editor-container">
+              <h1>Optimize your code</h1>
+              <MonacoEditor
+                height="300px"
+                language="javascript"
+                value={code}
+                onChange={(value) => setCode(value)}
+                className="monaco-editor"
+              />
+              <button onClick={handleOptimize}>Optimize</button>
+            </div>
+            <div className="optimize-container">
+              <h2>Optimize answer:</h2>
+              <pre>{optimization}</pre>
             </div>
           </div>
         )}
