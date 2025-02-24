@@ -104,7 +104,8 @@ button:hover {
 .linting-container,
 .auto-doc-container,
 .optimize-containe,
-.security-scan-container {
+.security-scan-container,
+.similarity-container {
   background: white;
   padding: 20px;
   border-radius: 8px;

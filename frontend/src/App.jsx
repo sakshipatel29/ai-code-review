@@ -11,6 +11,7 @@ function App() {
   const [activeSection, setActiveSection] = useState('analyze');
   const [optimization, setOptimization] = useState('');
   const [securityScanResults, setSecurityScanResults] = useState([]);
+  const [similarityScore, setSimilarityScore] = useState('');
 
   const handleAnalyze = async () => {
     try {
@@ -62,6 +63,16 @@ function App() {
     }
   };
 
+  const handleSimilarityCheck = async () => {
+    try {
+      const response = await axios.post("http://127.0.0.1:8000/similarity-check", { code });
+      setSimilarityScore(response.data.similarity_score);
+    } catch (error) {
+      console.error("Error checking code similarity:", error);
+      setSimilarityScore("Error: Unable to check similarity.");
+    }
+  };
+
   return (
     <div className="app-container">
       {/* Navbar */}
@@ -72,6 +83,7 @@ function App() {
           <li onClick={() => setActiveSection('autodoc')}>AutoDoc</li>
           <li onClick={() => setActiveSection('optimize')}>Optimize</li>
           <li onClick={() => setActiveSection('security')}>Security Scan</li>
+          <li onClick={() => setActiveSection('similarity')}>Similarity Check</li>
         </ul>
       </nav>
 
@@ -184,6 +196,25 @@ function App() {
               ) : (
                 <p>No vulnerabilities detected.</p>
               )}
+            </div>
+          </div>
+        )}
+        {activeSection === 'similarity' && (
+          <div className="section-container">
+            <div className="editor-container">
+              <h1>Code Similarity Checker (Plagiarism Detection)</h1>
+              <MonacoEditor
+                height="300px"
+                language="javascript"
+                value={code}
+                onChange={(value) => setCode(value)}
+                className="monaco-editor"
+              />
+              <button onClick={handleSimilarityCheck}>Check Similarity</button>
+            </div>
+            <div className="similarity-container">
+              <h2>Similarity Score:</h2>
+              <p>{similarityScore}</p>
             </div>
           </div>
         )}
