@@ -63,3 +63,14 @@ def auto_comment(request: CodeRequest):
         ],
     )
     return {"comments": response.choices[0].message.content}
+
+@app.post("/optimize")
+def optimize_code(request: CodeRequest):
+    response = client.chat.completions.create(
+        model="gpt-4",
+        messages=[
+            {"role": "system", "content": "Optimize and refactor the given code for better performance and readability."},
+            {"role": "user", "content": request.code},
+        ],
+    )
+    return {"optimized_code": response.choices[0].message.content}

@@ -51,6 +51,7 @@ AI Code Review is a web application designed to analyze code snippets using Open
 2. #### Install Dependencies
     ```bash
     pip install fastapi uvicorn openai pydantic python-multipart
+    pip install flask rope
 
 
 
