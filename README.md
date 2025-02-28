@@ -66,3 +66,4 @@ AI Code Review is a web application designed to analyze code snippets using Open
 
 
  
+uvicorn main:app --reload 

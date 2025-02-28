@@ -17,8 +17,6 @@ function App() {
   const [error, setError] = useState(null);
   const [codeA, setCodeA] = useState('');
   const [codeB, setCodeB] = useState('');
-
-
   const handleAnalyze = async () => {
     try {
       const response = await axios.post("http://127.0.0.1:8000/analyze", { code });
@@ -163,7 +161,6 @@ function App() {
             </div>
           </div>
         )}
-
         {activeSection === 'optimize' && (
           <div className="section-container">
             <div className="editor-container">

@@ -58,9 +58,10 @@ body {
 
 /* Section Layout */
 .section-container {
-  display: flex;
-  flex-direction: column;
-  width: 45%;
+  display: flex; /* This makes the children (editor and output) align in a row */
+  /* flex-direction: column;  Remove this line */
+  width: 100%;  /* Take up the full width */
+  justify-content: space-between; /* add space in between if needed*/
 }
 
 /* Left Side - Code Editor */
@@ -69,6 +70,7 @@ body {
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 48%; /* Adjust as needed (e.g., 48% to leave some margin) */
 }
 
 .editor-container h1 {
@@ -110,6 +112,7 @@ button:hover {
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 48%; /* Adjust as needed (e.g., 48% to leave some margin) */
 }
 
 h2 {
